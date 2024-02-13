@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Page</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+    /* Basic CSS for styling */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #1596a2;
+    }
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+    .menu {
+        width: 100%;
+        background-color: #333;
+        padding: 20px;
+    }
+    .menu ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 10px 77px;
+    }
+    .menu ul li {
+        display: inline;
+        margin-right: 20px;
+        transition: all 0.9s; /* Adding transition for smooth effects */
+        padding: 10px 20px;
+    }
+    .menu ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+        padding: 12px 20px;
+    }
+    .menu ul li a:hover {
+        border: 2px solid;
+        padding: 8px 18px;
+        background: black;
+    }
+    .post {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        position: relative;
+    }
+    .post img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin-bottom: 10px;
+    }
+    .post-actions button {
+        margin-right: 10px;
+    }
+    .comment-popup {
+        position: absolute;
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+        display: none;
+        top: calc(100% + 5px);
+        left: 0;
+    }
+    .container .menu .logos{
+        width: 40px;
+    }
+.logos{
+    width: 50px;
+}
+    /* Responsive styles */
+    @media only screen and (max-width: 600px) {
+        .container {
+            padding: 10px;
+            padding: 10px 20px;
+        }
+        .menu ul li a {
+            padding: 8px 14px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="menu">
+       <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html">Post</a></li>
+        <li><a href="about.html">About us</a></li>
+        <li><a href="contack.html">Contact us</a></li>
+       </ul>
+    </div>
+    <div id="content-section"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const contentSection = document.getElementById('content-section');
+
+        // Loop through localStorage to retrieve and display all posts
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (!isNaN(key)) { // Check if the key is a number (post ID)
+                const postData = JSON.parse(localStorage.getItem(key));
+                displayPost(contentSection, key, postData.title, postData.imageUrl);
+            }
+        }
+    });
+
+    function displayPost(contentSection, postId, title, imageUrl) {
+        const post = document.createElement('div');
+        post.classList.add('post');
+        post.id = postId;
+
+        const titleHeading = document.createElement('h2');
+        titleHeading.textContent = title;
+        post.appendChild(titleHeading);
+
+        const image = document.createElement('img');
+        image.src = imageUrl;
+        image.alt = title;
+        post.appendChild(image);
+
+        // Create post actions
+        const postActions = document.createElement('div');
+        postActions.classList.add('post-actions');
+
+        // Like button with Font Awesome icon
+        const likeButton = document.createElement('button');
+        likeButton.innerHTML = '<i class="far fa-thumbs-up"></i> Like';
+        likeButton.addEventListener('click', function() {
+            likePost(postId, this);
+        });
+        postActions.appendChild(likeButton);
+
+        // Comment button with Font Awesome icon
+        const commentButton = document.createElement('button');
+        commentButton.innerHTML = '<i class="far fa-comment"></i> Comment';
+        commentButton.addEventListener('click', function() {
+            showCommentPopup(postId);
+        });
+        postActions.appendChild(commentButton);
+
+        // Delete button with Font Awesome icon
+        const deleteButton = document.createElement('button');
+        deleteButton.innerHTML = '<i class="far fa-trash-alt"></i> Delete';
+        deleteButton.addEventListener('click', function() {
+            deletePost(postId);
+        });
+        postActions.appendChild(deleteButton);
+
+        post.appendChild(postActions);
+
+        contentSection.appendChild(post);
+    }
+
+    function likePost(postId, button) {
+        let likes = parseInt(localStorage.getItem(`${postId}_likes`) || 0);
+        likes++;
+        localStorage.setItem(`${postId}_likes`, likes);
+        button.innerHTML = `<i class="fas fa-thumbs-up"></i> Liked (${likes})`;
+        button.disabled = true;
+    }
+
+    function showCommentPopup(postId) {
+        const comments = getComments(postId);
+        const commentPopup = document.createElement('div');
+        commentPopup.classList.add('comment-popup');
+        commentPopup.innerHTML = `<h3>Comments</h3>${comments.map(comment => `<p>${comment}</p>`).join('')}`;
+        document.body.appendChild(commentPopup);
+        commentPopup.style.display = 'block'; // Show the popup
+    }
+
+    function getComments(postId) {
+        return JSON.parse(localStorage.getItem(`${postId}_comments`) || '[]');
+    }
+
+    function deletePost(postId) {
+        // Remove post from localStorage
+        localStorage.removeItem(postId);
+        // Remove post from the DOM
+        const post = document.getElementById(postId);
+        post.remove();
+    }
+</script>
+</body>
+</html>

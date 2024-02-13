@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Page</title>
+<style>
+    /* Basic CSS for styling */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #1193c6;
+    }
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+    .menu {
+        margin-bottom: 20px;
+    }
+    .menu a {
+        margin-right: 10px;
+        text-decoration: none;
+        color: #333;
+        position: relative;
+    }
+    .menu a:hover {
+        text-decoration: underline;
+    }
+    form {
+        margin-bottom: 20px;
+    }
+    h1{
+    top: 0;
+    text-align: center;
+    color: #fff;
+    margin-top: 1px;
+    }
+</style>
+
+</head>
+<body>
+    
+    <div class="menu">
+        <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html">Upload</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contack.html">Contact Us</a></li>
+        </ul>
+    </div>
+    <style>
+        .menu {
+             width: 100%;
+             background-color: #333;
+             padding: 20px;
+         }
+         .menu ul {
+             list-style-type: none;
+             margin: 0;
+             padding: 10px 90px;
+         }
+         .menu ul li {
+             display: inline;
+             margin-right: 20px;
+             transition: all 0.9s; /* Adding transition for smooth effects */
+             padding: 10px 20px;
+         }
+         .menu ul li a {
+             color: #fff;
+             text-decoration: none;
+             font-weight: bold;
+             padding: 12px 20px;
+         }
+         .menu ul li a:hover {
+             border: 2px solid;
+             padding: 8px 18px;
+             background: black;
+         }
+     </style>
+<div class="container">
+
+    <h1>Post Something</h1>
+    <form id="upload-form">
+        <input type="text" id="title" placeholder="Enter a title" required>
+        <input type="text" id="description" placeholder="Enter a description">
+        <input type="file" id="image-upload" accept="image/*" required>
+        <input type="submit" value="Upload">
+    </form>
+</div>
+
+<script>
+    document.getElementById('upload-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        const imageInput = document.getElementById('image-upload');
+        const titleInput = document.getElementById('title');
+        const descriptionInput = document.getElementById('description');
+        const imageFile = imageInput.files[0];
+        const title = titleInput.value;
+        const description = descriptionInput.value;
+
+        if (imageFile && title) {
+            const reader = new FileReader();
+            const postData = {
+                title: title,
+                description: description,
+                imageUrl: null
+            };
+
+            reader.onload = function(e) {
+                postData.imageUrl = e.target.result;
+                savePost(postData);
+            };
+            reader.readAsDataURL(imageFile);
+        }
+    });
+
+    function savePost(postData) {
+        const postId = Date.now().toString(); // Generate unique ID for the post
+        // Store post data in localStorage with unique ID
+        localStorage.setItem(postId, JSON.stringify(postData));
+        window.location.href = 'index.html'; // Redirect to home page after upload
+    }
+</script>
+</body>
+</html>
